@@ -79,6 +79,7 @@ We'll talk about the files and sub-directories as we move along. For now...
 Let's go ahead and open `lotus-todo.rb`.
 
 {% highlight ruby %}
+
 require 'lotus/model'
 Dir["#{ __dir__ }/lotus-todo/**/*.rb"].each { |file| require_relative file }
 
@@ -123,14 +124,70 @@ end.load!
 
 There's quite a bit here, so let's take it step by step:
 
-{% highlight ruby %}
-require 'lotus/model'
-{% endhighlight %}
-
 Remember when I mentioned that Lotus uses pluggable smaller frameworks? Here, because it's about to use the `lotus/model` framework, it requires it.
 
 {% highlight ruby %}
-Dir["#{ __dir__ }/lotus-todo/**/*.rb"].each { |file| require_relative file }
+  require 'lotus/model'
 {% endhighlight %}
 
-Lotus will load all files you put in `/lib/lotus-todo` for you.
+Lotus will automatically load all files you put in `/lib/lotus-todo` for you.
+
+{% highlight ruby %}
+  Dir["#{ __dir__ }/lotus-todo/**/*.rb"].each { |file| require_relative file }
+{% endhighlight %}
+
+The rest of this file consists of configuration for our application's data model.
+Lotus let's you create multiple configurations so you can potentially use different databases for different apps, 
+but they all derive from this one configuration instance. More on this later...  
+
+`:file_system` is the default adapter. But as you can see in the comments, Lotus is prepared to use other adapters.
+In our case for simplicity, we'll be using the :sql adapter with sqlite3. So we can go ahead and change it.
+
+{% highlight ruby %}
+
+Lotus::Model.configure do
+  # Database adapter
+  #
+  # Available options:
+  #
+  #  * Memory adapter
+  #    adapter type: :memory, uri: 'memory://localhost/lotus-todo_development'
+  #
+  #  * SQL adapter
+  #    adapter type: :sql, uri: 'sqlite://db/lotus-todo_development.sqlite3'
+  #    adapter type: :sql, uri: 'postgres://localhost/lotus-todo_development'
+  #    adapter type: :sql, uri: 'mysql://localhost/lotus-todo_development'
+  #
+  adapter type: :sql, uri: 'sqlite://db/lotus-todo_development.sqlite3'
+  
+
+{% endhighlight %}
+
+Lastly, Lotus will expect us to know about what mappings to use for a given model configuration.
+I'll go into more detail about what `mapping`s represent later, but for now we can just pass it an empty block.
+
+Also, note that `end.load!` at the end of the file.
+Lotus needs to compile some code internally, so it has to make sure it does that before the application starts. 
+That is what that `load!` method is for.
+
+{% highlight ruby %}
+
+mapping do
+  # More on this later...
+end
+
+end.load!
+
+{% endhighlight %}
+
+One more thing we'll have to do is install the sqlite3 gem, since we've changed the adapter config to use it.
+Open the `Gemfile` and add `gem 'sqlite3'` below `lotus-model`.
+
+So with that out of the way, let's run the application.
+Still `cd`'d into the project, run `bundle install` to install the frameworks dependencies and
+then run `lotus server`.
+
+visit `localhost:2300` on your browser and voila! 
+
+That's it for this first part of the series. On the next one is when we'll start to actually implement
+our application.
