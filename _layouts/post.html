@@ -4,7 +4,7 @@ layout: default
 
 <div class="page-content wc-container">
 	
-	<div class="post">
+	<div class="post" style="border-bottom: none;">
 		<h1>{{ page.title }}</h1>
 		<p class="post-meta">
 			{% if (page.categories.size > 0 %}
@@ -21,9 +21,24 @@ layout: default
 		</div>
 	</div>
 
+	{% if page.disqus %}
+	<div id="disqus_thread"></div>
+	<script type="text/javascript">
+	    /* * * CONFIGURATION VARIABLES * * */
+	    var disqus_shortname = 'theocodesblog';
+	    
+	    /* * * DON'T EDIT BELOW THIS LINE * * */
+	    (function() {
+	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+	{% endif %}
 
 	{% if site.related_posts %}
-	<div class="related">
+	<div class="related" style="border-top: none;">
 		<h4>Related Posts</h2>
 		<ul class="posts">
 		    {% for post in site.related_posts limit:3 %}
